@@ -143,23 +143,36 @@ class SendEmailJob implements ShouldQueue
 
     protected function wrapInHtmlDocument($content)
     {
+        $tile = url('/images/email-white-bg.png');
+
         return <<<HTML
         <!DOCTYPE html>
-        <html>
+        <html lang="ro" xmlns:o="urn:schemas-microsoft-com:office:office">
         <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="x-apple-disable-message-reformatting">
         <meta name="color-scheme" content="light only">
         <meta name="supported-color-schemes" content="light only">
+        <!--[if mso]>
+        <xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+        <![endif]-->
         <style>
         :root { color-scheme: light only; supported-color-schemes: light only; }
-        body { margin: 0 !important; padding: 0 !important; background-color: #ffffff !important; }
+        html, body { margin: 0 !important; padding: 0 !important; background-color: #ffffff !important; }
+        .sm-wrap, .sm-wrap .sm-cell { background-color: #ffffff !important; }
+        [data-ogsb] .sm-wrap, [data-ogsb] .sm-wrap .sm-cell,
+        [data-ogsb] .sm-cell { background-color: #ffffff !important; }
+        u + .sm-body .sm-wrap, u + .sm-body .sm-cell { background-color: #ffffff !important; }
+        @media (prefers-color-scheme: dark) {
+        html, body, .sm-body, .sm-wrap, .sm-cell { background-color: #ffffff !important; }
+        }
         </style>
         </head>
-        <body bgcolor="#ffffff" style="margin:0; padding:0; background-color:#ffffff;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff; width:100%;">
+        <body class="sm-body" bgcolor="#ffffff" style="margin:0; padding:0; background-color:#ffffff;">
+        <table class="sm-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; width:100%;">
         <tr>
-        <td align="center" bgcolor="#ffffff" style="background-color:#ffffff; padding:24px 12px;">
+        <td class="sm-cell" align="center" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; padding:24px 12px;">
         {$content}
         </td>
         </tr>
