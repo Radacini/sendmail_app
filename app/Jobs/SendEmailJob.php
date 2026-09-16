@@ -67,6 +67,7 @@ class SendEmailJob implements ShouldQueue
                 Log::info("SendEmailJob: Adding tracking pixel for {$recipient->email}");
                 $trackingPixel = $this->generateTrackingPixel($result->tracking_token);
                 $content .= $trackingPixel;
+                $content = $this->wrapInHtmlDocument($content);
             }
 
             // Send the email
@@ -138,6 +139,34 @@ class SendEmailJob implements ShouldQueue
         ];
 
         return str_replace(array_keys($replacements), array_values($replacements), $content);
+    }
+
+    protected function wrapInHtmlDocument($content)
+    {
+        return <<<HTML
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="light only">
+        <meta name="supported-color-schemes" content="light only">
+        <style>
+        :root { color-scheme: light only; supported-color-schemes: light only; }
+        body { margin: 0 !important; padding: 0 !important; background-color: #ffffff !important; }
+        </style>
+        </head>
+        <body bgcolor="#ffffff" style="margin:0; padding:0; background-color:#ffffff;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff; width:100%;">
+        <tr>
+        <td align="center" bgcolor="#ffffff" style="background-color:#ffffff; padding:24px 12px;">
+        {$content}
+        </td>
+        </tr>
+        </table>
+        </body>
+        </html>
+        HTML;
     }
 
     /**
