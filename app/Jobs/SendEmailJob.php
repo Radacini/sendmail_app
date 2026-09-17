@@ -143,6 +143,8 @@ class SendEmailJob implements ShouldQueue
 
     protected function wrapInHtmlDocument($content)
     {
+        $tile = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAHUlEQVQ4jWP8//8/A7mAiWydo5pHNY9qHtVMFc0AnKADJRpd72EAAAAASUVORK5CYII=';
+
         return <<<HTML
         <!DOCTYPE html>
         <html lang="ro" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -168,9 +170,9 @@ class SendEmailJob implements ShouldQueue
         </style>
         </head>
         <body class="sm-body" bgcolor="#ffffff" style="margin:0; padding:0; background-color:#ffffff;">
-        <table class="sm-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff; width:100%;">
+        <table class="sm-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; width:100%;">
         <tr>
-        <td class="sm-cell" align="center" bgcolor="#ffffff" style="background-color:#ffffff; padding:24px 12px;">
+        <td class="sm-cell" align="center" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; padding:24px 12px;">
         {$content}
         </td>
         </tr>
