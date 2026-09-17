@@ -143,11 +143,9 @@ class SendEmailJob implements ShouldQueue
 
     protected function wrapInHtmlDocument($content)
     {
-        $tile = url('/images/email-white-bg.png');
-
         return <<<HTML
         <!DOCTYPE html>
-        <html lang="ro" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+        <html lang="ro" xmlns:o="urn:schemas-microsoft-com:office:office">
         <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -170,14 +168,9 @@ class SendEmailJob implements ShouldQueue
         </style>
         </head>
         <body class="sm-body" bgcolor="#ffffff" style="margin:0; padding:0; background-color:#ffffff;">
-        <!--[if gte mso 9]>
-        <v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
-        <v:fill type="tile" src="{$tile}" color="#ffffff"/>
-        </v:background>
-        <![endif]-->
-        <table class="sm-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; width:100%;">
+        <table class="sm-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff; width:100%;">
         <tr>
-        <td class="sm-cell" align="center" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; padding:24px 12px;">
+        <td class="sm-cell" align="center" bgcolor="#ffffff" style="background-color:#ffffff; padding:24px 12px;">
         {$content}
         </td>
         </tr>
