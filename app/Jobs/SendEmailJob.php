@@ -173,7 +173,13 @@ class SendEmailJob implements ShouldQueue
         <table class="sm-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; width:100%;">
         <tr>
         <td class="sm-cell" align="center" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; padding:24px 12px;">
+        <table role="presentation" width="500" cellpadding="0" cellspacing="0" border="0" align="center" style="width:500px; max-width:500px; margin:0 auto;">
+        <tr>
+        <td style="width:500px; max-width:500px;">
         {$content}
+        </td>
+        </tr>
+        </table>
         </td>
         </tr>
         </table>
