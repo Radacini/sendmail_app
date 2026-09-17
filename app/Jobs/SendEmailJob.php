@@ -143,7 +143,7 @@ class SendEmailJob implements ShouldQueue
 
     protected function wrapInHtmlDocument($content)
     {
-        $tile = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAHUlEQVQ4jWP8//8/A7mAiWydo5pHNY9qHtVMFc0AnKADJRpd72EAAAAASUVORK5CYII=';
+        $tile = url('/images/email-white-bg.png');
 
         return <<<HTML
         <!DOCTYPE html>
