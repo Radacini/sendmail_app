@@ -99,15 +99,6 @@
                                 value="{{ $template->is_html ? '1' : '0' }}">
                         </div>
 
-                        @if (Str::startsWith($template->content, '@view:'))
-                            <div class="mb-4 bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded text-sm">
-                                Acest șablon este un fișier Blade static ({{ Str::after($template->content, '@view:') }}),
-                                editat direct din cod, nu din acest formular. Câmpul de mai jos conține doar un marker
-                                intern folosit la trimitere — dacă îl modifici și salvezi, șablonul va folosi textul
-                                de aici în loc de fișierul Blade.
-                            </div>
-                        @endif
-
                         <div class="mb-4">
                             <label for="content" class="block text-sm font-medium text-gray-700">Conținut Email</label>
                             <div class="mt-1">

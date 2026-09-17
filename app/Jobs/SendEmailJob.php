@@ -59,23 +59,15 @@ class SendEmailJob implements ShouldQueue
 
             // Personalize the email content
             Log::info("SendEmailJob: Personalizing content for {$recipient->email}");
+            $content = $this->personalizeContent($template->content, $recipient, $campaign);
             $subject = $this->personalizeContent($template->subject, $recipient, $campaign);
 
-            if ($template->is_html && $viewName = $this->extractViewReference($template->content)) {
-                Log::info("SendEmailJob: Rendering static view [{$viewName}] for {$recipient->email}");
+            // Add tracking pixel to HTML content
+            if ($template->is_html) {
+                Log::info("SendEmailJob: Adding tracking pixel for {$recipient->email}");
                 $trackingPixel = $this->generateTrackingPixel($result->tracking_token);
-                $rendered = view($viewName, ['trackingPixel' => $trackingPixel])->render();
-                $content = $this->personalizeContent($rendered, $recipient, $campaign);
-            } else {
-                $content = $this->personalizeContent($template->content, $recipient, $campaign);
-
-                // Add tracking pixel to HTML content
-                if ($template->is_html) {
-                    Log::info("SendEmailJob: Adding tracking pixel for {$recipient->email}");
-                    $trackingPixel = $this->generateTrackingPixel($result->tracking_token);
-                    $content .= $trackingPixel;
-                    $content = $this->wrapInHtmlDocument($content);
-                }
+                $content .= $trackingPixel;
+                $content = $this->wrapInHtmlDocument($content);
             }
 
             // Send the email
@@ -134,19 +126,6 @@ class SendEmailJob implements ShouldQueue
         }
     }
 
-    protected function extractViewReference(?string $content): ?string
-    {
-        $content = trim((string) $content);
-
-        if (!str_starts_with($content, '@view:')) {
-            return null;
-        }
-
-        $viewName = trim(substr($content, strlen('@view:')));
-
-        return $viewName !== '' && view()->exists($viewName) ? $viewName : null;
-    }
-
     /**
      * Personalize email content with recipient data
      */
@@ -164,6 +143,8 @@ class SendEmailJob implements ShouldQueue
 
     protected function wrapInHtmlDocument($content)
     {
+        $tile = url('/images/email-white-bg.png');
+
         return <<<HTML
         <!DOCTYPE html>
         <html lang="ro" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -171,17 +152,27 @@ class SendEmailJob implements ShouldQueue
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="x-apple-disable-message-reformatting">
+        <meta name="color-scheme" content="light only">
+        <meta name="supported-color-schemes" content="light only">
         <!--[if mso]>
         <xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
         <![endif]-->
         <style>
-        html, body { margin: 0; padding: 0; }
+        :root { color-scheme: light only; supported-color-schemes: light only; }
+        html, body { margin: 0 !important; padding: 0 !important; background-color: #ffffff !important; }
+        .sm-wrap, .sm-wrap .sm-cell { background-color: #ffffff !important; }
+        [data-ogsb] .sm-wrap, [data-ogsb] .sm-wrap .sm-cell,
+        [data-ogsb] .sm-cell { background-color: #ffffff !important; }
+        u + .sm-body .sm-wrap, u + .sm-body .sm-cell { background-color: #ffffff !important; }
+        @media (prefers-color-scheme: dark) {
+        html, body, .sm-body, .sm-wrap, .sm-cell { background-color: #ffffff !important; }
+        }
         </style>
         </head>
         <body class="sm-body" bgcolor="#ffffff" style="margin:0; padding:0; background-color:#ffffff;">
-        <table class="sm-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff; width:100%;">
+        <table class="sm-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; width:100%;">
         <tr>
-        <td class="sm-cell" align="center" bgcolor="#ffffff" style="background-color:#ffffff; padding:24px 12px;">
+        <td class="sm-cell" align="center" bgcolor="#ffffff" background="{$tile}" style="background-color:#ffffff; background-image:url('{$tile}'); background-repeat:repeat; padding:24px 12px;">
         <table role="presentation" width="500" cellpadding="0" cellspacing="0" border="0" align="center" style="width:500px; max-width:500px; margin:0 auto;">
         <tr>
         <td style="width:500px; max-width:500px;">
