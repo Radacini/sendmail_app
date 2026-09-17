@@ -59,15 +59,23 @@ class SendEmailJob implements ShouldQueue
 
             // Personalize the email content
             Log::info("SendEmailJob: Personalizing content for {$recipient->email}");
-            $content = $this->personalizeContent($template->content, $recipient, $campaign);
             $subject = $this->personalizeContent($template->subject, $recipient, $campaign);
 
-            // Add tracking pixel to HTML content
-            if ($template->is_html) {
-                Log::info("SendEmailJob: Adding tracking pixel for {$recipient->email}");
+            if ($template->is_html && $viewName = $this->extractViewReference($template->content)) {
+                Log::info("SendEmailJob: Rendering static view [{$viewName}] for {$recipient->email}");
                 $trackingPixel = $this->generateTrackingPixel($result->tracking_token);
-                $content .= $trackingPixel;
-                $content = $this->wrapInHtmlDocument($content);
+                $rendered = view($viewName, ['trackingPixel' => $trackingPixel])->render();
+                $content = $this->personalizeContent($rendered, $recipient, $campaign);
+            } else {
+                $content = $this->personalizeContent($template->content, $recipient, $campaign);
+
+                // Add tracking pixel to HTML content
+                if ($template->is_html) {
+                    Log::info("SendEmailJob: Adding tracking pixel for {$recipient->email}");
+                    $trackingPixel = $this->generateTrackingPixel($result->tracking_token);
+                    $content .= $trackingPixel;
+                    $content = $this->wrapInHtmlDocument($content);
+                }
             }
 
             // Send the email
@@ -124,6 +132,19 @@ class SendEmailJob implements ShouldQueue
             // Log error
             Log::error("Failed to send email to {$recipient->email}: " . $e->getMessage());
         }
+    }
+
+    protected function extractViewReference(?string $content): ?string
+    {
+        $content = trim((string) $content);
+
+        if (!str_starts_with($content, '@view:')) {
+            return null;
+        }
+
+        $viewName = trim(substr($content, strlen('@view:')));
+
+        return $viewName !== '' && view()->exists($viewName) ? $viewName : null;
     }
 
     /**

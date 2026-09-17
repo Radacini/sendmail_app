@@ -27,7 +27,7 @@ class CampanieSiteTemplateSeeder extends Seeder
             ],
             [
                 'subject' => 'Publică gratuit anunțul mașinii tale pe Rădăcini',
-                'content' => view('email-templates.campanie-site')->render(),
+                'content' => '@view:emails.campaigns.campanie-site',
                 'is_html' => true,
             ]
         );
