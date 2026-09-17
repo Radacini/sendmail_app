@@ -323,7 +323,7 @@
                                     font-weight:700;
                                 "
                             >
-                                Dragi clienți,
+                                Dragi clienți,,,
                             </strong>
                         </td>
                     </tr>
