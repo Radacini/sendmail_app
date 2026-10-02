@@ -128,6 +128,23 @@ class SendEmailJob implements ShouldQueue
             // Log error
             Log::error("Failed to send email to {$recipient->email}: " . $e->getMessage());
         }
+
+        $this->completeCampaignIfDone($result->campaign_id);
+    }
+
+    protected function completeCampaignIfDone($campaignId): void
+    {
+        $pending = CampaignResult::query()
+            ->where('campaign_id', '=', $campaignId)
+            ->where('status', '=', 'pending')
+            ->exists();
+
+        if (!$pending) {
+            \App\Models\Campaign::query()
+                ->where('id', '=', $campaignId)
+                ->where('status', '=', 'running')
+                ->update(['status' => 'completed', 'completed_at' => now()]);
+        }
     }
 
     /**
