@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\EmailRecipient;
 use App\Models\CampaignResult;
 use App\Models\EmailTracking;
+use App\Services\AutorulateLink;
 
 class SendEmailJob implements ShouldQueue
 {
@@ -61,6 +62,9 @@ class SendEmailJob implements ShouldQueue
             Log::info("SendEmailJob: Personalizing content for {$recipient->email}");
             $content = $this->personalizeContent($template->content, $recipient, $campaign);
             $subject = $this->personalizeContent($template->subject, $recipient, $campaign);
+
+            // Replace the placeholder link with a per-recipient HMAC-signed link
+            $content = AutorulateLink::apply($content, $recipient->email, $campaign->name);
 
             // Add tracking pixel to HTML content
             if ($template->is_html) {
