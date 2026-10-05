@@ -15,7 +15,6 @@ class Analytics extends Component
     public function render()
     {
         $campaigns = Campaign::query()
-            ->where('user_id', '=', auth()->id())
             ->with(['emailTemplate', 'emailList'])
             ->latest()
             ->get();
@@ -25,7 +24,6 @@ class Analytics extends Component
         if ($this->selectedCampaignId) {
             $campaign = Campaign::query()
                 ->where('id', '=', $this->selectedCampaignId)
-                ->where('user_id', '=', auth()->id())
                 ->first();
 
             if ($campaign) {
@@ -43,10 +41,10 @@ class Analytics extends Component
 
     protected function getOverallAnalytics()
     {
-        $totalCampaigns = Campaign::query()->where('user_id', '=', auth()->id())->count();
-        $totalEmailsSent = Campaign::query()->where('user_id', '=', auth()->id())->sum('emails_sent');
-        $totalEmailsOpened = Campaign::query()->where('user_id', '=', auth()->id())->sum('emails_opened');
-        $totalEmailsFailed = Campaign::query()->where('user_id', '=', auth()->id())->sum('emails_failed');
+        $totalCampaigns = Campaign::query()->count();
+        $totalEmailsSent = Campaign::query()->sum('emails_sent');
+        $totalEmailsOpened = Campaign::query()->sum('emails_opened');
+        $totalEmailsFailed = Campaign::query()->sum('emails_failed');
 
         $openRate = $totalEmailsSent > 0 ? round(($totalEmailsOpened / $totalEmailsSent) * 100, 2) : 0;
 
@@ -56,7 +54,7 @@ class Analytics extends Component
             'total_emails_opened' => $totalEmailsOpened,
             'total_emails_failed' => $totalEmailsFailed,
             'open_rate' => $openRate,
-            'recent_campaigns' => Campaign::query()->where('user_id', '=', auth()->id())
+            'recent_campaigns' => Campaign::query()
                 ->with(['emailTemplate', 'emailList'])
                 ->latest()
                 ->limit(5)

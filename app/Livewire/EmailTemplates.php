@@ -23,7 +23,7 @@ class EmailTemplates extends Component
 
     public function render()
     {
-        $templates = EmailTemplate::where('user_id', auth()->id())
+        $templates = EmailTemplate::query()
             ->latest()
             ->paginate(10);
 
@@ -38,7 +38,6 @@ class EmailTemplates extends Component
 
         if ($this->editingTemplateId) {
             $template = EmailTemplate::where('id', $this->editingTemplateId)
-                ->where('user_id', auth()->id())
                 ->first();
 
             if ($template) {
@@ -67,7 +66,6 @@ class EmailTemplates extends Component
     public function editTemplate($templateId)
     {
         $template = EmailTemplate::where('id', $templateId)
-            ->where('user_id', auth()->id())
             ->first();
 
         if ($template) {
@@ -82,7 +80,6 @@ class EmailTemplates extends Component
     public function deleteTemplate($templateId)
     {
         $template = EmailTemplate::where('id', $templateId)
-            ->where('user_id', auth()->id())
             ->first();
 
         if ($template) {

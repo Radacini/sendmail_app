@@ -21,26 +21,22 @@ class Dashboard extends Component
 
     public function loadStats()
     {
-        $userId = auth()->id();
-
         $this->stats = [
-            'email_lists' => EmailList::query()->where('user_id', '=', $userId)->where('status', '=', 'completed')->count(),
-            'templates' => EmailTemplate::query()->where('user_id', '=', $userId)->count(),
-            'campaigns' => Campaign::query()->where('user_id', '=', $userId)->count(),
-            'emails_sent' => CampaignResult::query()->whereHas('campaign', function ($query) use ($userId) {
-                $query->where('user_id', '=', $userId);
-            })->where('status', '=', 'sent')->count(),
+            'email_lists' => EmailList::query()->where('status', '=', 'completed')->count(),
+            'templates' => EmailTemplate::query()->count(),
+            'campaigns' => Campaign::query()->count(),
+            'emails_sent' => CampaignResult::query()->where('status', '=', 'sent')->count(),
             'system_status' => $this->getSystemStatus(),
         ];
     }
 
     protected function getSystemStatus()
     {
-        $limit = env('EMAIL_RATE_LIMIT', 50);
-        $currentUsage = RateLimitLog::query()
-            ->where('type', '=', 'email_sending')
-            ->where('created_at', '>=', now()->startOfMinute())
-            ->value('count') ?? 0;
+        $limit = config('app.email_rate_limit');
+        $currentUsage = CampaignResult::query()
+            ->where('status', '=', 'sent')
+            ->where('sent_at', '>=', now()->subMinute())
+            ->count();
 
         return [
             'smtp_connected' => $this->checkSmtpConnection(),

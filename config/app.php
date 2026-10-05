@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    // Max emails sent per minute (Office 365 SMTP allows ~30/min per mailbox).
+    'email_rate_limit' => (int) env('EMAIL_RATE_LIMIT', 25),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

@@ -51,9 +51,8 @@ class CreateCampaign extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        $templates = EmailTemplate::query()->where('user_id', '=', (int) auth()->id())->get();
+        $templates = EmailTemplate::query()->get();
         $emailLists = EmailList::query()
-            ->where('user_id', '=', (int) auth()->id())
             ->where('status', '=', 'completed')
             ->get();
 
