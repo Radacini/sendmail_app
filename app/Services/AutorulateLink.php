@@ -8,7 +8,7 @@ class AutorulateLink
 {
     public const PLACEHOLDER = 'https://placeholder.local/LINK_RULATE';
 
-    public const BASE_URL = 'https://testweb.subaru.ro/autorulate/vinde-masina-rulata';
+    public const BASE_URL = 'https://radacini.ro/autorulate/vinde-masina-rulata';
 
     public static function make(string $email, string $campaign = ''): string
     {
