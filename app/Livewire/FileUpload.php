@@ -38,7 +38,8 @@ class FileUpload extends Component
             $result = $service->processFile($this->file, $this->name, auth()->id());
 
             if ($result['success']) {
-                session()->flash('message', 'Fișier încărcat și procesat cu succes!');
+                $stats = $result['stats'];
+                session()->flash('message', "Din {$stats['total']} randuri au fost incarcate {$stats['valid']} adrese valide ({$stats['invalid']} invalide au fost ignorate).");
                 return redirect()->route('email-lists.index');
             } else {
                 session()->flash('error', $result['errors']);
