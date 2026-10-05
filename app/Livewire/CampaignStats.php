@@ -21,10 +21,9 @@ class CampaignStats extends Component
     {
         $this->campaignId = $id;
 
-        // Verificăm dacă campania aparține utilizatorului curent
+        // Verificăm dacă campania există
         Campaign::query()
             ->where('id', '=', (int) $this->campaignId)
-            ->where('user_id', '=', (int) auth()->id())
             ->firstOrFail();
     }
 
@@ -33,7 +32,6 @@ class CampaignStats extends Component
     {
         $campaign = Campaign::with(['emailTemplate', 'emailList'])
             ->where('id', '=', (int) $this->campaignId)
-            ->where('user_id', '=', (int) auth()->id())
             ->firstOrFail();
 
         $resultsQuery = CampaignResult::query()

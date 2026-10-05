@@ -16,7 +16,8 @@ class CreateUserCommand extends Command
      */
     protected $signature = 'user:create
                             {email : The email address of the user}
-                            {password : The password for the user}';
+                            {password? : The password for the user (prompted securely if omitted)}
+                            {--name= : The display name (defaults to a name derived from the email)}';
 
     /**
      * The console command description.
@@ -31,7 +32,7 @@ class CreateUserCommand extends Command
     public function handle(): int
     {
         $email = $this->argument('email');
-        $password = $this->argument('password');
+        $password = $this->argument('password') ?? $this->secret('Password');
 
         // Validate email format
         $validator = Validator::make(['email' => $email], [
@@ -49,10 +50,14 @@ class CreateUserCommand extends Command
             return Command::FAILURE;
         }
 
-        // Extract name from email
-        $name = explode('@', $email)[0];
-        $name = str_replace('.', ' ', $name);
-        $name = ucwords($name);
+        $name = $this->option('name');
+
+        if (!$name) {
+            // Extract name from email
+            $name = explode('@', $email)[0];
+            $name = str_replace('.', ' ', $name);
+            $name = ucwords($name);
+        }
 
         // Create the user
         try {

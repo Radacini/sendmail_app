@@ -26,14 +26,12 @@ class Campaigns extends Component
     public function render()
     {
         $campaigns = Campaign::query()
-            ->where('user_id', '=', (int) auth()->id())
             ->with(['emailTemplate', 'emailList'])
             ->latest()
             ->paginate(10);
 
         // Check if any campaign is running or scheduled to trigger UI polling
         $anyRunning = Campaign::query()
-            ->where('user_id', '=', (int) auth()->id())
             ->whereIn('status', ['running', 'scheduled'])
             ->exists();
 
@@ -48,7 +46,6 @@ class Campaigns extends Component
     {
         $campaign = Campaign::query()
             ->where('id', '=', (int) $campaignId)
-            ->where('user_id', '=', (int) auth()->id())
             ->first();
 
         if (!$campaign || ($campaign->status !== 'pending' && $campaign->status !== 'failed')) {
@@ -124,7 +121,6 @@ class Campaigns extends Component
     {
         $campaign = Campaign::query()
             ->where('id', '=', (int) $campaignId)
-            ->where('user_id', '=', (int) auth()->id())
             ->first();
 
         if ($campaign && $campaign->status === 'running') {
@@ -137,7 +133,6 @@ class Campaigns extends Component
     {
         $campaign = Campaign::query()
             ->where('id', '=', (int) $campaignId)
-            ->where('user_id', '=', (int) auth()->id())
             ->first();
 
         if ($campaign) {

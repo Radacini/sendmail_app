@@ -11,7 +11,6 @@ class EmailTemplateController extends Controller
     public function index()
     {
         $templates = EmailTemplate::query()
-            ->where('user_id', '=', (int) auth()->id())
             ->latest()
             ->paginate(10);
 
@@ -62,7 +61,6 @@ class EmailTemplateController extends Controller
     {
         $template = EmailTemplate::query()
             ->where('id', '=', (int) $id)
-            ->where('user_id', '=', (int) auth()->id())
             ->firstOrFail();
 
         return view('email-templates.edit', [
@@ -82,7 +80,6 @@ class EmailTemplateController extends Controller
 
         $template = EmailTemplate::query()
             ->where('id', '=', (int) $id)
-            ->where('user_id', '=', (int) auth()->id())
             ->firstOrFail();
 
         $data = [
@@ -119,7 +116,6 @@ class EmailTemplateController extends Controller
     {
         $template = EmailTemplate::query()
             ->where('id', '=', (int) $id)
-            ->where('user_id', '=', (int) auth()->id())
             ->first();
 
         if ($template) {

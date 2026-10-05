@@ -55,7 +55,6 @@ class FileUpload extends Component
         /** @var EmailList|null $list */
         $list = EmailList::query()
             ->where('id', '=', (int) $listId)
-            ->where('user_id', '=', (int) auth()->id())
             ->first();
 
         if ($list instanceof EmailList) {

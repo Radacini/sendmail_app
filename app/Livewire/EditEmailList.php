@@ -22,10 +22,9 @@ class EditEmailList extends Component
     {
         $this->listId = $id;
 
-        // Verificăm dacă lista aparține utilizatorului curent
+        // Verificăm dacă lista există
         $list = EmailList::query()
             ->where('id', '=', (int) $this->listId)
-            ->where('user_id', '=', (int) auth()->id())
             ->firstOrFail();
     }
 

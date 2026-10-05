@@ -21,15 +21,11 @@ class Dashboard extends Component
 
     public function loadStats()
     {
-        $userId = auth()->id();
-
         $this->stats = [
-            'email_lists' => EmailList::query()->where('user_id', '=', $userId)->where('status', '=', 'completed')->count(),
-            'templates' => EmailTemplate::query()->where('user_id', '=', $userId)->count(),
-            'campaigns' => Campaign::query()->where('user_id', '=', $userId)->count(),
-            'emails_sent' => CampaignResult::query()->whereHas('campaign', function ($query) use ($userId) {
-                $query->where('user_id', '=', $userId);
-            })->where('status', '=', 'sent')->count(),
+            'email_lists' => EmailList::query()->where('status', '=', 'completed')->count(),
+            'templates' => EmailTemplate::query()->count(),
+            'campaigns' => Campaign::query()->count(),
+            'emails_sent' => CampaignResult::query()->where('status', '=', 'sent')->count(),
             'system_status' => $this->getSystemStatus(),
         ];
     }
