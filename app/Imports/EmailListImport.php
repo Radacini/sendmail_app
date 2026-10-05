@@ -4,9 +4,8 @@ namespace App\Imports;
 
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithValidation;
 
-class EmailListImport implements ToModel, WithHeadingRow, WithValidation
+class EmailListImport implements ToModel, WithHeadingRow
 {
     protected $emails = [];
 
@@ -28,12 +27,5 @@ class EmailListImport implements ToModel, WithHeadingRow, WithValidation
     public function getEmails()
     {
         return $this->emails;
-    }
-
-    public function rules(): array
-    {
-        return [
-            'email' => 'required|email',
-        ];
     }
 }
