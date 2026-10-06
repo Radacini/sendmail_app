@@ -13,6 +13,7 @@ use App\Models\EmailRecipient;
 use App\Models\CampaignResult;
 use App\Models\EmailTracking;
 use App\Services\AutorulateLink;
+use App\Services\CampaignFailureLog;
 
 class SendEmailJob implements ShouldQueue
 {
@@ -123,10 +124,12 @@ class SendEmailJob implements ShouldQueue
             ]);
 
             // Update campaign stats
+            $campaign = $result->campaign;
             $campaign->increment('emails_failed', 1, []);
 
             // Log error
             Log::error("Failed to send email to {$recipient->email}: " . $e->getMessage());
+            CampaignFailureLog::failure($campaign, $recipient->email, $e);
         }
 
         $this->completeCampaignIfDone($result->campaign_id);

@@ -69,6 +69,9 @@ class Campaigns extends Component
         // Clear previous results if any (e.g. if restarting a failed campaign)
         $campaign->campaignResults()->delete();
 
+        // Start a fresh (empty) failure log for this run
+        \App\Services\CampaignFailureLog::reset($campaign->id);
+
         $results = [];
         foreach ($recipients as $recipient) {
             $results[] = [
